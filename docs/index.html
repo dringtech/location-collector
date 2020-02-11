@@ -41,7 +41,10 @@
       map.addEventListener('locationfound', locationFoundHandler)
 
       function startTracking () {
-        map.locate({ watch: true });
+        map.locate({
+          watch: true,
+          enableHighAccuracy: true,
+        });
       }
       document.querySelector('#find-me').addEventListener('click', startTracking);
     });
