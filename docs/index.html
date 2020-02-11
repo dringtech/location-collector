@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Location Collector</title>
+  <link rel="stylesheet" href="//unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin=""/>
+  <style>
+    #map { height: 20em; }
+  </style>
+</head>
+<body>
+  <div id="map">
+
+  </div>
+  <button id = "find-me">Show my location</button><br/>
+  <p id = "status"></p>
+  <a id = "map-link" target="_blank"></a>
+  <script src="//unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const hebden = [ 53.742, -2.014 ];
+      const map = L.map('map').setView(hebden, 13);
+
+      const cartoPositron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+      });
+      map.addLayer(cartoPositron);
+
+      var locationMarker = L.circle(hebden, {radius: 200});
+      map.addLayer(locationMarker);
+
+      function locationFoundHandler(l) {
+        locationMarker.setLatLng(l.latlng);
+        locationMarker.setRadius(l.accuracy);
+        // map.panTo(l.latlng);
+        map.fitBounds(l.bounds);
+      }
+      map.addEventListener('locationfound', locationFoundHandler)
+
+      map.locate();
+
+    //   const status = document.querySelector('#status');
+    //   const mapLink = document.querySelector('#map-link');
+
+    //   function startTracking () {
+    //     status.textContent = 'Starting tracking';
+    //     geoFindMe();
+    //     var tracker = setInterval(geoFindMe, 1000);
+    //   }
+
+    //   function geoFindMe() {
+
+    //     // mapLink.href = '';
+    //     // mapLink.textContent = '';
+
+    //     function success(position) {
+    //       const latitude  = position.coords.latitude;
+    //       const longitude = position.coords.longitude;
+
+    //       status.textContent = '';
+    //       mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+    //       mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+    //     }
+
+    //     function error() {
+    //       status.textContent = 'Unable to retrieve your location';
+    //     }
+
+    //     if (!navigator.geolocation) {
+    //       status.textContent = 'Geolocation is not supported by your browser';
+    //     } else {
+    //       status.textContent = 'Locating…';
+    //       navigator.geolocation.getCurrentPosition(success, error);
+    //     }
+    //   }
+
+    //   document.querySelector('#find-me').addEventListener('click', startTracking);
+    });
+  </script>
+</body>
+</html>
