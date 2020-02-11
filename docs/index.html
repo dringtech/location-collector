@@ -15,6 +15,7 @@
 <body>
   <div id="map"></div>
   <button id = "find-me">Start tracking</button><br/>
+  <button id="dont-find-me">Stop tracking</button><br/>
   <script src="//unpkg.com/leaflet@1.6.0/dist/leaflet.js"
     integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
     crossorigin=""></script>
@@ -31,22 +32,29 @@
       map.addLayer(cartoPositron);
 
       var locationMarker = L.circle(hebden, {radius: 200});
-      map.addLayer(locationMarker);
 
       function locationFoundHandler(l) {
         locationMarker.setLatLng(l.latlng);
         locationMarker.setRadius(l.accuracy);
-        map.fitBounds(l.bounds);
+        if (!map.hasLayer(locationMarker)) map.addLayer(locationMarker);
       }
       map.addEventListener('locationfound', locationFoundHandler)
 
-      function startTracking () {
+      function startTracking() {
         map.locate({
           watch: true,
+          setView: true,
+          maxZoom: 18,
           enableHighAccuracy: true,
         });
       }
       document.querySelector('#find-me').addEventListener('click', startTracking);
+
+      function stopTracking() {
+        map.stopLocate();
+        if (map.hasLayer(locationMarker)) map.removeLayer(locationMarker);
+      }
+      document.querySelector('#dont-find-me').addEventListener('click', stopTracking);
     });
   </script>
 </body>
