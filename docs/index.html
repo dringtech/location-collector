@@ -80,7 +80,7 @@
         const address = document.querySelector('#business-address').value;
         pdsdk.sendEvent("enluf7ermi5bjph", {
           timestamp: new Date().toISOString(),
-          location,
+          ...location,
           businessName,
           address,
         });
