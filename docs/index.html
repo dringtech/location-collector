@@ -15,6 +15,15 @@
     crossorigin=""/>
   <style>
     #map { height: 20em; }
+    .form-a {
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 0;
+      width: 0;
+      z-index: -1;
+    }
   </style>
 </head>
 <body>
@@ -24,10 +33,14 @@
   <form>
     <fieldset>
       <h1>Business details</h1>
-      <label for="business-name">Name</label>
-      <input id="business-name" name="business-name">
-      <label for="business-address">Address</label>
-      <input id="business-address" name="business-address">
+      <label class="form-a" for="name">Name</label>
+      <input class="form-a" id="name" name="name">
+      <label class="form-a" for="address">Address</label>
+      <input class="form-a" id="address" name="address">
+      <label for="n">Name</label>
+      <input id="n" name="n">
+      <label for="a">Address</label>
+      <input id="a" name="a">
     </fieldset>
   </form>
   <button id="send-event">Send location</button><br/>
@@ -74,15 +87,28 @@
       }
       document.querySelector('#dont-find-me').addEventListener('click', stopTracking);
 
+      function getHash() {
+        const n = document.querySelector('#n').value;
+        const a = document.querySelector('#a').value;
+        return btoa(JSON.stringify({n, a}));
+      }
+
       function sendEvent() {
-        if (!location) return;
-        const businessName = document.querySelector('#business-name').value;
-        const address = document.querySelector('#business-address').value;
+        // if (!location) return;
+        const name = document.querySelector('#name').value;
+        const address = document.querySelector('#address').value;
+        const hash = getHash();
+        const table = 'location_collector';
         pdsdk.sendEvent("enluf7ermi5bjph", {
-          timestamp: new Date().toISOString(),
-          ...location,
-          businessName,
-          address,
+          data: {
+            timestamp: new Date().toISOString(),
+            name,
+            address,
+            ...location,
+          },
+          meta: {
+            hash,
+          },
         });
       }
       document.querySelector('#send-event').addEventListener('click', sendEvent);
